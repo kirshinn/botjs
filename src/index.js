@@ -1,8 +1,8 @@
 require('dotenv').config();
 const TelegramApi = require('node-telegram-bot-api');
-const {gameOptions, againOptions} = require('./options');
 const sequilize = require('./db');
 const User = require('./models');
+const {gameOptions, againOptions} = require('./options');
 
 const bot = new TelegramApi(process.env.TELEGRAM_API_TOKEN, {polling: true});
 
@@ -33,12 +33,18 @@ const start = async () => {
         const chatId = msg.chat.id;
         try {
             if (text === '/start') {
-                const user = await User.findOne({chatId});
-                if (!user) await User.create({chatId});
+                const user = await User.findOne({ where: { chatId: chatId } });
+                if (!user) await User.create({
+                    username: msg.from.username,
+                    lastName: msg.from.last_name,
+                    firstName: msg.from.first_name,
+                    chatId: msg.chat.id,
+                    languageCode: msg.from.language_code
+                });
                 return bot.sendMessage(chatId, `Добро пожаловать в telegram бот Kirshin Bot!`);
             }
             if (text === '/info') {
-                const user = await User.findOne({chatId});
+                const user = await User.findOne({ where: { chatId: chatId } });
                 await bot.sendMessage(chatId, `Вы вошли как ${msg.from.username}`);
                 return bot.sendMessage(chatId, `В игре у вас ${user.right} правильных ответов, ${user.wrong} неправильных ответов.`);
             }
@@ -54,7 +60,7 @@ const start = async () => {
     bot.on('callback_query', async msg => {
         const data = msg.data;
         const chatId = msg.message.chat.id;
-        const user = await User.findOne({chatId});
+        const user = await User.findOne({ where: { chatId: chatId } });
         if (data === '/again') {
             return startGame(chatId);
         }
