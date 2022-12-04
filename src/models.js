@@ -3,7 +3,7 @@ const {DataTypes} = require('sequelize');
 
 const User = sequilize.define('user', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, unique: true},
-    username: {type: DataTypes.STRING, unique: true},
+    userName: {type: DataTypes.STRING, unique: true},
     lastName: {type: DataTypes.STRING},
     firstName: {type: DataTypes.STRING},
     chatId: {type: DataTypes.BIGINT, unique: true},

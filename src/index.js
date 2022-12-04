@@ -35,7 +35,7 @@ const start = async () => {
             if (text === '/start') {
                 const user = await User.findOne({ where: { chatId: chatId } });
                 if (!user) await User.create({
-                    username: msg.from.username,
+                    userName: msg.from.username,
                     lastName: msg.from.last_name,
                     firstName: msg.from.first_name,
                     chatId: msg.chat.id,
